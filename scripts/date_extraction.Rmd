@@ -1,0 +1,42 @@
+---
+title: "Google Bigrquery Data Extraction"
+output: html_notebook
+---
+
+Load R bigquery and set project id.
+```{r}
+# replace pid with your google project id
+# bigrquery can be installed with install.packages("bigrquery")
+# from the R console
+# it will ask you for an authentication code
+# which is hard to do remote, so I just did all this in Rstudio
+# on my local machine. May be difficult to reproduce
+library(bigrquery)
+pid = "xxxxxxxx"
+```
+Query publicly available datasets, selecting the [link_id | date] and fields for the worldnews subreddit and including only posts having more than 100 comments
+```{r}
+sql = 
+"SELECT id, DATE(SEC_TO_TIMESTAMP(created_utc)) AS date
+FROM [fh-bigquery:reddit_posts.2017_01], 
+[fh-bigquery:reddit_posts.2017_02],
+[fh-bigquery:reddit_posts.2017_03],
+[fh-bigquery:reddit_posts.2017_04],
+[fh-bigquery:reddit_posts.2017_05],
+[fh-bigquery:reddit_posts.2017_06],
+[fh-bigquery:reddit_posts.2017_07],
+[fh-bigquery:reddit_posts.2017_08],
+[fh-bigquery:reddit_posts.2017_09]
+WHERE subreddit = 'worldnews' AND
+num_comments > 100
+ORDER BY id"
+data = query_exec(sql, project=pid)
+summary(data)
+```
+Write the table to a new file, fields separated by tab, samples by newline. 
+```{r, eval=FALSE}
+# will write to wherever your R working dir is 
+# set with setwd("path")
+write.table(data, file="worldnews_1_2017-9_2017_submissiondates.txt", sep="\t", quote=FALSE,col.names=FALSE,row.names=FALSE)
+```
+
