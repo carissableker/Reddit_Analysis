@@ -6,7 +6,7 @@
 
 * [Report](./reddit-analysis-final-project-report.pdf)
 
-* [Prestentation slides](./reddit-analysis-final_project_presentation.pdf)
+* [Presentation slides](./reddit-analysis-final_project_presentation.pdf)
 
 ## Links
 
